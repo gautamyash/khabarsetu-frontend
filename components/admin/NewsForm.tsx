@@ -37,6 +37,13 @@ const newsFormSchema = z.object({
 });
 
 type NewsFormValues = z.infer<typeof newsFormSchema>;
+// zodResolver types the form against the schema's *input* shape (before
+// `.default()` is applied) for TFieldValues, and its *output* shape (after
+// defaults) for the value handleSubmit's callback receives — the two
+// diverge here because `tags`/`isBreaking`/`isFeatured` use `.default()`.
+// Splitting them out (matching @hookform/resolvers' own Resolver<Input,
+// Context, Output> signature) is what useForm below expects.
+type NewsFormInput = z.input<typeof newsFormSchema>;
 
 const EMPTY_VALUES: NewsFormValues = {
   title: "",
@@ -86,7 +93,7 @@ function NewsFormFields({
     setValue,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<NewsFormValues>({
+  } = useForm<NewsFormInput, unknown, NewsFormValues>({
     resolver: zodResolver(newsFormSchema),
     defaultValues: article
       ? {
@@ -105,7 +112,11 @@ function NewsFormFields({
 
   const titleValue = watch("title");
   const content = watch("content");
-  const tags = watch("tags");
+  // TFieldValues is now the schema's input type, where `tags` is optional
+  // (it has a `.default([])`) — it's always populated in practice (see
+  // EMPTY_VALUES / defaultValues below), this just satisfies TagInput's
+  // `string[]` prop type.
+  const tags = watch("tags") ?? [];
   const featuredImage = watch("featuredImage");
 
   function handleTitleChange(event: ChangeEvent<HTMLInputElement>) {
