@@ -3,6 +3,7 @@ import { Minus, Pencil, Star, Zap } from "lucide-react";
 import { ARTICLE_STATUS_CONFIG } from "@/lib/admin-constants";
 import { DeleteArticleButton } from "@/components/admin/DeleteArticleButton";
 import { PublishToggleButton } from "@/components/admin/PublishToggleButton";
+import { ShareArticleButton } from "@/components/admin/ShareArticleButton";
 import { formatHindiDate } from "@/lib/utils";
 import type { AdminArticle } from "@/types/article";
 
@@ -117,6 +118,11 @@ export function NewsTable({ articles }: { articles: AdminArticle[] }) {
                       संपादित करें
                     </Link>
                     <PublishToggleButton id={article.id} status={article.status} />
+                    <ShareArticleButton
+                      slug={article.slug}
+                      title={article.title}
+                      published={article.status === "published"}
+                    />
                     <DeleteArticleButton id={article.id} title={article.title} />
                   </div>
                 </td>
@@ -154,6 +160,11 @@ export function NewsTable({ articles }: { articles: AdminArticle[] }) {
                 संपादित करें
               </Link>
               <PublishToggleButton id={article.id} status={article.status} />
+              <ShareArticleButton
+                slug={article.slug}
+                title={article.title}
+                published={article.status === "published"}
+              />
               <DeleteArticleButton id={article.id} title={article.title} />
             </div>
           </div>

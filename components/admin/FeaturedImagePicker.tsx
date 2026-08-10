@@ -7,7 +7,7 @@ import { formatFileSize } from "@/lib/utils";
 import type { AdminMedia } from "@/types/media";
 
 const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
-const MAX_SIZE_BYTES = 5 * 1024 * 1024;
+const MAX_SIZE_BYTES = 200 * 1024;
 const INVALID_TYPE_MESSAGE = "कृपया केवल JPG, PNG या WEBP फोटो अपलोड करें।";
 
 type UploadState = "idle" | "uploading" | "error";

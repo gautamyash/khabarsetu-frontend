@@ -4,7 +4,7 @@ import { listMedia, uploadMedia } from "@/lib/media-api";
 import { getSessionToken } from "@/lib/session";
 
 const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
-const MAX_SIZE_BYTES = 5 * 1024 * 1024;
+const MAX_SIZE_BYTES = 200 * 1024;
 
 /**
  * GET /api/admin/media — proxies to GET /api/v1/media. Used by the
