@@ -1,25 +1,31 @@
 import type { NextConfig } from "next";
 
-// Uploaded media is served directly by the FastAPI backend (see
-// backend/app/main.py's StaticFiles mount at MEDIA_URL_PREFIX), a different
-// origin than the Next.js app in dev — next/image needs that origin
-// explicitly allow-listed, or it refuses to render the image at runtime.
-// Derived from the same env var the rest of the app already uses for the
-// backend URL (lib/config.ts), so nothing here is hardcoded.
+// Uploaded media is served from two origins: the FastAPI backend (see
+// backend/app/main.py's StaticFiles mount at MEDIA_URL_PREFIX), still used
+// for whatever rows predate the Supabase Storage migration, and the
+// Supabase Storage "news-media" bucket, used for every new upload as of
+// that migration. Both are different origins than the Next.js app in dev —
+// next/image needs each explicitly allow-listed, or it refuses to render
+// the image at runtime.
 //
 // The pathname is intentionally left open ("/**", any path on that origin)
-// rather than pinned to "/uploads/**": the backend's media path prefix
-// (MEDIA_URL_PREFIX, see backend/app/core/config.py) is its own,
-// independently configurable setting, and there's no shared env var to
-// derive it from here. The actual security boundary this config exists to
-// enforce is the origin allow-list (protocol+hostname+port) — restricting
-// by domain is what keeps this from being "arbitrary remote domains"; a
-// path restriction on top of that would only add fragility (two settings,
-// in two codebases, that would need to be kept in sync by hand) without a
-// real security benefit, since this is the app's own single-purpose media
-// origin, not a shared/multi-tenant host.
+// rather than pinned to a specific prefix: the actual security boundary
+// this config exists to enforce is the origin allow-list (protocol+
+// hostname+port) — restricting by path on top of that would only add
+// fragility without a real security benefit, since each of these is the
+// app's own single-purpose media origin, not a shared/multi-tenant host.
 const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 const backendOrigin = new URL(apiUrl);
+
+// The Supabase project's own URL — the same project already used for the
+// database (see backend/.env's DATABASE_URL host) and for Storage. This is
+// the project's public URL, not a secret (unlike the service_role key,
+// which stays backend-only and is never referenced here) — it's the same
+// URL Supabase's own client-side SDKs embed directly in browser bundles, so
+// hardcoding it here keeps this a single-file, self-contained change rather
+// than introducing a new NEXT_PUBLIC_SUPABASE_URL env var nothing else in
+// the frontend uses yet.
+const supabaseOrigin = new URL("https://gnrginstunclokgqxtkp.supabase.co");
 
 const nextConfig: NextConfig = {
   images: {
@@ -28,6 +34,12 @@ const nextConfig: NextConfig = {
         protocol: backendOrigin.protocol.replace(":", "") as "http" | "https",
         hostname: backendOrigin.hostname,
         port: backendOrigin.port,
+        pathname: "/**",
+      },
+      {
+        protocol: supabaseOrigin.protocol.replace(":", "") as "http" | "https",
+        hostname: supabaseOrigin.hostname,
+        port: supabaseOrigin.port,
         pathname: "/**",
       },
     ],
