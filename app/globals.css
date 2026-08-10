@@ -137,14 +137,20 @@ li {
   }
 }
 
-/* Article detail column divider — a subtle vertical rule (opacity 0.2)
-   between the main article and its sidebar, matching the Stitch
-   article-detail reference exactly. Kept separate from .editorial-divider
-   above (homepage-only, full-strength, different breakpoint) so the
-   homepage is completely unaffected by this addition. */
+/* Article detail column divider — a subtle vertical rule between the main
+   article and its sidebar, matching the Stitch article-detail reference
+   exactly. Kept separate from .editorial-divider above (homepage-only,
+   full-strength, different breakpoint) so the homepage is completely
+   unaffected by this addition.
+   The 20% "subtlety" MUST live on the border-color alone (via color-mix),
+   not on the element's `opacity` — `opacity` on this container faded
+   every descendant (hero image, excerpt, .article-content body text,
+   tags), not just the border line. That bug was also active on mobile,
+   where border-right is removed below but opacity: 0.2 was still applied
+   unconditionally, washing out the whole article body with no border to
+   show for it. */
 .article-divider {
-  border-right: 1px solid var(--color-on-surface);
-  opacity: 0.2;
+  border-right: 1px solid color-mix(in srgb, var(--color-on-surface) 20%, transparent);
 }
 
 @media (max-width: 767px) {
