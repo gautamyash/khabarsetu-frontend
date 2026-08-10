@@ -18,6 +18,15 @@ import { listCategories } from "@/lib/categories-api";
 import { UI_TEXT } from "@/lib/constants";
 import type { Article } from "@/types/news";
 
+// Without this, `/` has no dynamic API usage (no searchParams/cookies/
+// headers) and no revalidate config, so Next's default is to statically
+// render it once (Full Route Cache) and serve that same snapshot on every
+// request thereafter — confirmed in production: the homepage was serving a
+// render from a prior day while /category/[slug] (which reads
+// searchParams, forcing dynamic rendering) and /news/[slug] stayed fresh.
+// Forcing dynamic rendering here matches that same always-fresh behavior.
+export const dynamic = "force-dynamic";
+
 interface HomeData {
   breaking: Article[];
   featured: Article[];

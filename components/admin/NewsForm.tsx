@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Loader2 } from "lucide-react";
-import { slugify } from "@/lib/slugify";
+import { generateArticleSlug } from "@/lib/article-slug";
 import { ArticleEditor } from "@/components/admin/ArticleEditor";
 import { TagInput } from "@/components/admin/TagInput";
 import { FeaturedImagePicker } from "@/components/admin/FeaturedImagePicker";
@@ -123,7 +123,12 @@ function NewsFormFields({
     const value = event.target.value;
     setValue("title", value);
     if (!slugTouched.current) {
-      setValue("slug", slugify(value));
+      // generateArticleSlug (not slugify — that one keeps the original
+      // script, still correct for categories) is only reached here in
+      // create mode: slugTouched starts `true` in edit mode (see the ref
+      // above), so an existing article's slug is never regenerated just
+      // because its title is edited.
+      setValue("slug", generateArticleSlug(value));
     }
   }
 
@@ -139,27 +144,47 @@ function NewsFormFields({
     const url = isEditMode ? `/api/admin/articles/${article!.id}` : "/api/admin/articles";
     const method = isEditMode ? "PUT" : "POST";
 
-    try {
-      const response = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...values, status }),
-      });
-      const data = await response.json().catch(() => null);
+    // A new article's slug collision is resolved automatically by retrying
+    // with a short numeric suffix (-2, -3, ...) appended, reusing the
+    // backend's existing "slug already in use" 409 check (see
+    // backend/app/routers/articles.py) as the source of truth rather than
+    // adding a new slug-availability endpoint. Edit mode never retries —
+    // an existing article's slug must never be silently changed, so a 409
+    // there (e.g. the admin manually typed a slug that collides) still
+    // surfaces as the normal error below, same as before this change.
+    const maxAttempts = isEditMode ? 1 : 6;
+    let attemptSlug = values.slug;
 
-      if (!response.ok) {
-        setFormError(data?.message ?? (isEditMode ? "खबर अपडेट नहीं हो सकी।" : "खबर सहेजी नहीं जा सकी।"));
+    try {
+      for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+        const response = await fetch(url, {
+          method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...values, slug: attemptSlug, status }),
+        });
+
+        if (response.status === 409 && !isEditMode && attempt < maxAttempts) {
+          attemptSlug = `${values.slug}-${attempt + 1}`;
+          continue;
+        }
+
+        const data = await response.json().catch(() => null);
+
+        if (!response.ok) {
+          setFormError(data?.message ?? (isEditMode ? "खबर अपडेट नहीं हो सकी।" : "खबर सहेजी नहीं जा सकी।"));
+          return;
+        }
+
+        const message =
+          status === "published"
+            ? "खबर सफलतापूर्वक प्रकाशित हो गई।"
+            : isEditMode
+              ? "खबर सफलतापूर्वक अपडेट हो गई।"
+              : "खबर ड्राफ्ट के रूप में सहेजी गई।";
+        onSaved(message);
+        router.refresh();
         return;
       }
-
-      const message =
-        status === "published"
-          ? "खबर सफलतापूर्वक प्रकाशित हो गई।"
-          : isEditMode
-            ? "खबर सफलतापूर्वक अपडेट हो गई।"
-            : "खबर ड्राफ्ट के रूप में सहेजी गई।";
-      onSaved(message);
-      router.refresh();
     } catch {
       setFormError("सर्वर से संपर्क नहीं हो सका। कृपया पुनः प्रयास करें।");
     } finally {
