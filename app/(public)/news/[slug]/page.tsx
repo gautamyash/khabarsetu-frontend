@@ -19,6 +19,21 @@ import { SITE_URL } from "@/lib/site-url";
 import { UI_TEXT } from "@/lib/constants";
 import type { Article } from "@/types/news";
 
+// Without this, this route has no dynamic API usage (no searchParams/
+// cookies/headers) and no revalidate config, so Next's default is to
+// statically render each /news/[slug] page once per slug (Full Route
+// Cache) and serve that same snapshot — including a cached notFound()
+// result — on every request thereafter. In production this meant an
+// article edited/republished under a slug that had previously 404'd
+// (e.g. during the migration to short Roman slugs, or simply before the
+// article existed) kept serving the stale 404 forever, even though
+// GET /articles/slug/{slug} on the backend was returning the article
+// correctly the whole time. Same root cause and same fix as the
+// homepage's `export const dynamic = "force-dynamic"` in
+// app/(public)/page.tsx — forcing dynamic rendering here makes every
+// request re-check the backend instead of reusing a stale cached render.
+export const dynamic = "force-dynamic";
+
 const ERROR_MESSAGE = "खबर उपलब्ध नहीं है।";
 
 /**
