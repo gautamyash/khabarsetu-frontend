@@ -29,7 +29,7 @@ export function FeaturedNewsCard({
     <article className={cn("group", className)}>
       <Link
         href={`/news/${article.slug}`}
-        className="relative mb-4 block h-[280px] w-full overflow-hidden rounded border border-outline-variant bg-surface-container sm:h-[400px]"
+        className="relative mb-4 block h-[280px] w-full overflow-hidden rounded-lg border border-outline-variant bg-surface-container sm:h-[400px]"
       >
         <Image
           src={article.featuredImage}

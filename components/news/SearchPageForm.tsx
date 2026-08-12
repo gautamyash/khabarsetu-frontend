@@ -25,7 +25,7 @@ export function SearchPageForm({ defaultValue }: { defaultValue?: string }) {
         type="text"
         defaultValue={defaultValue}
         placeholder="खोजें..."
-        className="w-full border border-outline bg-surface-container-low py-4 pr-4 pl-12 text-lg text-on-surface placeholder:text-on-surface-variant focus:border-transparent focus:ring-2 focus:ring-primary focus:outline-none"
+        className="w-full rounded-md border border-outline bg-surface-container-lowest py-4 pr-4 pl-12 text-lg text-on-surface placeholder:text-on-surface-variant focus:border-transparent focus:ring-2 focus:ring-primary focus:outline-none"
       />
     </form>
   );

@@ -38,10 +38,17 @@ export async function Footer() {
   const topCategories = categories.slice(0, 6);
   const socialLinks = SOCIAL_LINKS.filter((item) => Boolean(settings[item.key]));
 
+  // text-on-primary-container (a light rose, not the dark maroon
+  // primary-container itself) — the dark maroon read almost invisibly
+  // against this footer's dark maroon-charcoal background; this is the
+  // token specifically meant for text drawn on top of a primary-container
+  // surface, so it keeps the maroon family but is actually legible here.
+  const kickerClass = "mb-4 block text-xs font-bold tracking-[0.18em] text-on-primary-container uppercase";
+
   return (
     <footer className="mt-12 border-t-2 border-primary bg-tertiary">
-      <Container className="py-12 text-center md:text-left">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4">
+      <Container className="py-14 text-center md:text-left">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 md:grid-cols-4">
           <div>
             <span className="font-serif-hi text-2xl font-black text-surface-container-lowest uppercase">
               {settings.siteName}
@@ -51,60 +58,69 @@ export async function Footer() {
             )}
           </div>
 
-          <div className="flex flex-col items-center gap-2.5 md:items-start">
-            <Link href="/" className={LINK_CLASS}>
-              {UI_TEXT.home}
-            </Link>
-            <Link href="/search" className={LINK_CLASS}>
-              {UI_TEXT.search}
-            </Link>
+          <div className="flex flex-col items-center md:items-start">
+            <span className={kickerClass}>मेनू</span>
+            <div className="flex flex-col items-center gap-2.5 md:items-start">
+              <Link href="/" className={LINK_CLASS}>
+                {UI_TEXT.home}
+              </Link>
+              <Link href="/search" className={LINK_CLASS}>
+                {UI_TEXT.search}
+              </Link>
+            </div>
           </div>
 
           {topCategories.length > 0 && (
-            <div className="flex flex-col items-center gap-2.5 md:items-start">
-              {topCategories.map((cat) => (
-                <Link key={cat.slug} href={`/category/${cat.slug}`} className={LINK_CLASS}>
-                  {cat.name}
-                </Link>
-              ))}
+            <div className="flex flex-col items-center md:items-start">
+              <span className={kickerClass}>श्रेणियाँ</span>
+              <div className="flex flex-col items-center gap-2.5 md:items-start">
+                {topCategories.map((cat) => (
+                  <Link key={cat.slug} href={`/category/${cat.slug}`} className={LINK_CLASS}>
+                    {cat.name}
+                  </Link>
+                ))}
+              </div>
             </div>
           )}
 
-          <div className="flex flex-col items-center gap-2.5 md:items-start">
-            {settings.contactEmail && (
-              <a href={`mailto:${settings.contactEmail}`} className={`flex items-center gap-1.5 ${LINK_CLASS}`}>
-                <Mail className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                {settings.contactEmail}
-              </a>
-            )}
-            {settings.phone && (
-              <a href={`tel:${settings.phone}`} className={`flex items-center gap-1.5 ${LINK_CLASS}`}>
-                <Phone className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                {settings.phone}
-              </a>
-            )}
-            {settings.address && (
-              <span className="flex items-start gap-1.5 text-sm text-tertiary-fixed-dim">
-                <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
-                {settings.address}
-              </span>
-            )}
-            {socialLinks.length > 0 && (
-              <div className="mt-1 flex flex-wrap items-center justify-center gap-3 md:justify-start">
-                {socialLinks.map((item) => (
-                  <a
-                    key={item.key}
-                    href={settings[item.key] ?? undefined}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`flex items-center gap-1 ${LINK_CLASS}`}
-                  >
-                    {item.label}
-                    <ExternalLink className="h-3 w-3" aria-hidden />
-                  </a>
-                ))}
-              </div>
-            )}
+          <div className="flex flex-col items-center md:items-start">
+            <span className={kickerClass}>संपर्क</span>
+            <div className="flex flex-col items-center gap-2.5 md:items-start">
+              {settings.contactEmail && (
+                <a href={`mailto:${settings.contactEmail}`} className={`flex items-center gap-1.5 ${LINK_CLASS}`}>
+                  <Mail className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                  {settings.contactEmail}
+                </a>
+              )}
+              {settings.phone && (
+                <a href={`tel:${settings.phone}`} className={`flex items-center gap-1.5 ${LINK_CLASS}`}>
+                  <Phone className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                  {settings.phone}
+                </a>
+              )}
+              {settings.address && (
+                <span className="flex items-start gap-1.5 text-sm text-tertiary-fixed-dim">
+                  <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
+                  {settings.address}
+                </span>
+              )}
+              {socialLinks.length > 0 && (
+                <div className="mt-1 flex flex-wrap items-center justify-center gap-3 md:justify-start">
+                  {socialLinks.map((item) => (
+                    <a
+                      key={item.key}
+                      href={settings[item.key] ?? undefined}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`flex items-center gap-1 ${LINK_CLASS}`}
+                    >
+                      {item.label}
+                      <ExternalLink className="h-3 w-3" aria-hidden />
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

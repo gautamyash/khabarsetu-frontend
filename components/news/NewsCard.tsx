@@ -14,8 +14,8 @@ import { cn } from "@/lib/utils";
  */
 export function NewsCard({ article, className }: { article: Article; className?: string }) {
   return (
-    <article className={cn("group flex flex-col", className)}>
-      <Link href={`/news/${article.slug}`} className="relative mb-3 block h-[200px] w-full overflow-hidden bg-surface-container">
+    <article className={cn("card-hover group flex flex-col", className)}>
+      <Link href={`/news/${article.slug}`} className="relative mb-3 block h-[200px] w-full overflow-hidden rounded-lg bg-surface-container">
         <Image
           src={article.featuredImage}
           alt={article.title}

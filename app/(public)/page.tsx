@@ -60,15 +60,13 @@ async function loadHomeData(): Promise<HomeData> {
  */
 function HeroEmptyState() {
   return (
-    <div className="flex aspect-[21/9] w-full items-center justify-center border-t-4 border-primary bg-surface-container-low sm:aspect-[16/9]">
-      <PublicEmptyState
-        icon={Newspaper}
-        size="lg"
-        title="अभी खबरें प्रकाशित नहीं हुई हैं"
-        message="नई खबर प्रकाशित होते ही वह यहां दिखाई देगी।"
-        className="w-full max-w-md border-t-0 bg-transparent py-0"
-      />
-    </div>
+    <PublicEmptyState
+      icon={Newspaper}
+      size="lg"
+      title="अभी खबरें प्रकाशित नहीं हुई हैं"
+      message="नई खबर प्रकाशित होते ही वह यहां दिखाई देगी।"
+      className="my-6"
+    />
   );
 }
 
@@ -98,7 +96,7 @@ export default async function Home() {
 
   if (errorMessage) {
     return (
-      <Container className="py-16">
+      <Container className="py-12">
         <PublicEmptyState
           icon={TriangleAlert}
           size="lg"
@@ -129,44 +127,61 @@ export default async function Home() {
       <PageViewTracker eventType="page_view" path="/" />
       <BreakingNewsBar articles={breaking} />
 
-      {/* Hero editorial grid — lead story + text-only "मुख्य खबरें" list */}
+      {/* Hero editorial grid — lead story + text-only "मुख्य खबरें" list.
+          WHITE band: the front page's lead story, deliberately plain so it
+          contrasts against the cream band immediately below it. */}
       <Container className="border-b border-on-surface py-8 lg:pb-12">
         {heroArticle ? (
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
-            <div className="editorial-divider pb-8 lg:col-span-8 lg:pr-6 lg:pb-0">
-              <HeroStory article={heroArticle} priority />
+          <>
+            <HomeSectionHeading kicker="आज की" title="प्रमुख खबर" className="mb-6 sm:mb-7" />
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+              <div className="editorial-divider pb-8 lg:col-span-8 lg:pr-6 lg:pb-0">
+                <HeroStory article={heroArticle} priority />
+              </div>
+              {sidebarStories.length > 0 && (
+                <aside className="flex flex-col rounded-lg bg-surface-container-low/60 p-5 lg:col-span-4 lg:p-6">
+                  <div className="mb-3 flex items-center gap-2.5">
+                    <span className="h-[3px] w-9 shrink-0 bg-primary" aria-hidden />
+                    <span className="text-[11px] font-bold tracking-[0.18em] text-primary uppercase">इसे भी पढ़ें</span>
+                  </div>
+                  <h2 className="font-serif-hi mb-3 border-b-2 border-on-surface pb-3 text-xl font-black text-on-surface">
+                    मुख्य खबरें
+                  </h2>
+                  {sidebarStories.map((article) => (
+                    <StoryRow key={article.id} article={article} showTime={false} />
+                  ))}
+                </aside>
+              )}
             </div>
-            {sidebarStories.length > 0 && (
-              <aside className="flex flex-col lg:col-span-4">
-                <div className="mb-2 border-b-4 border-primary-container pb-2">
-                  <h2 className="font-serif-hi text-2xl font-bold text-on-surface">मुख्य खबरें</h2>
-                </div>
-                {sidebarStories.map((article) => (
-                  <StoryRow key={article.id} article={article} showTime={false} />
-                ))}
-              </aside>
-            )}
-          </div>
+          </>
         ) : (
           <HeroEmptyState />
         )}
       </Container>
 
-      {/* Second row — 3-col editorial grid, text/image/text rhythm */}
+      {/* Second row — 3-col editorial grid, text/image/text rhythm.
+          CREAM band: the "important coverage right after the lead story"
+          module, full-bleed so it reads as a distinct editorial section
+          rather than another card grid on the same white page. */}
       {secondRow.length > 0 && (
-        <Container className="border-b border-on-surface py-10">
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-            {secondRow.map((article, i) => (
-              <SecondRowStory key={article.id} article={article} showImage={i === 1} />
-            ))}
-          </div>
-        </Container>
+        <div className="border-b border-outline-variant bg-surface-container-low">
+          <Container className="py-10">
+            <HomeSectionHeading kicker="प्रमुख कवरेज" title="अहम खबरें" />
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+              {secondRow.map((article, i) => (
+                <SecondRowStory key={article.id} article={article} showImage={i === 1} />
+              ))}
+            </div>
+          </Container>
+        </div>
       )}
 
-      {/* ताज़ा खबरें — dense grid of the remaining latest stories */}
-      <div className="border-b border-outline-variant bg-surface-container-low/40">
+      {/* ताज़ा खबरें — dense grid of the remaining latest stories.
+          WHITE band again, restoring contrast against the cream module
+          above before the very-light-cream trending module below. */}
+      <div className="border-b border-outline-variant">
         <Container className="py-10">
-          <HomeSectionHeading title={UI_TEXT.latestNews} />
+          <HomeSectionHeading kicker="अपडेट" title={UI_TEXT.latestNews} />
           {latestForGrid.length > 0 ? (
             <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
               {latestForGrid.map((article) => (
@@ -179,35 +194,40 @@ export default async function Home() {
         </Container>
       </div>
 
-      {/* और खबरें + सबसे ज़्यादा पढ़ी गई */}
+      {/* और खबरें + सबसे ज़्यादा पढ़ी गई — VERY LIGHT cream band (a lighter
+          tint than the second-row module above) so the "trending" module
+          feels like its own editorial desk without repeating the exact
+          same beige weight twice on one page. */}
       {moreNews.length > 0 && (
-        <Container className="py-10">
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
-            <section className="lg:col-span-2">
-              <HomeSectionHeading title="और खबरें" />
-              <div className="flex flex-col">
-                {moreNews.map((article, i) => (
-                  <StoryRow key={article.id} article={article} showImage={i % 4 === 3} />
-                ))}
-              </div>
-            </section>
+        <div className="border-b border-outline-variant bg-surface-container-low/35">
+          <Container className="py-10">
+            <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
+              <section className="lg:col-span-2">
+                <HomeSectionHeading kicker="विस्तार से" title="और खबरें" />
+                <div className="flex flex-col">
+                  {moreNews.map((article, i) => (
+                    <StoryRow key={article.id} article={article} showImage={i % 4 === 3} />
+                  ))}
+                </div>
+              </section>
 
-            <aside className="lg:border-l lg:border-outline-variant lg:pl-8">
-              <HomeSectionHeading title="सबसे ज़्यादा पढ़ी गई" />
-              <div className="flex flex-col">
-                {mostRead.map((article, i) => (
-                  <StoryRow key={article.id} article={article} index={i + 1} showCategory={false} showTime={false} />
-                ))}
-              </div>
-            </aside>
-          </div>
-        </Container>
+              <aside className="rounded-lg border border-outline-variant/60 bg-surface-container-lowest p-5 lg:p-6">
+                <HomeSectionHeading kicker="ट्रेंडिंग" title="सबसे ज़्यादा पढ़ी गई" />
+                <div className="flex flex-col">
+                  {mostRead.map((article, i) => (
+                    <StoryRow key={article.id} article={article} index={i + 1} showCategory={false} showTime={false} />
+                  ))}
+                </div>
+              </aside>
+            </div>
+          </Container>
+        </div>
       )}
 
       {/* Category sections — only for categories that actually have articles */}
       <Container>
-        <CategoryNewsSection title="मध्यप्रदेश" categorySlug="madhya-pradesh" articles={mpNews} />
-        <CategoryNewsSection title="खेल" categorySlug="khel" articles={sportsNews} />
+        <CategoryNewsSection title="मध्यप्रदेश" kicker="क्षेत्रीय" categorySlug="madhya-pradesh" articles={mpNews} />
+        <CategoryNewsSection title="खेल" kicker="स्पोर्ट्स डेस्क" categorySlug="khel" articles={sportsNews} />
       </Container>
     </>
   );

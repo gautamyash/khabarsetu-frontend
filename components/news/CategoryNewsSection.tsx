@@ -14,10 +14,15 @@ import { UI_TEXT } from "@/lib/constants";
  */
 export function CategoryNewsSection({
   title,
+  kicker,
   categorySlug,
   articles,
 }: {
   title: string;
+  /** Small uppercase label above the category title, e.g. "क्षेत्रीय" —
+   * purely decorative page chrome, same as HomeSectionHeading's own
+   * kicker prop (passed straight through). */
+  kicker?: string;
   categorySlug: string;
   articles: Article[];
 }) {
@@ -28,7 +33,12 @@ export function CategoryNewsSection({
 
   return (
     <section className="border-t border-outline-variant py-10 first:border-t-0">
-      <HomeSectionHeading title={title} href={`/category/${categorySlug}`} linkLabel={UI_TEXT.readMore} />
+      <HomeSectionHeading
+        kicker={kicker}
+        title={title}
+        href={`/category/${categorySlug}`}
+        linkLabel={UI_TEXT.readMore}
+      />
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-5">
         <div className="lg:col-span-3">
           <HeroStory article={primary} />

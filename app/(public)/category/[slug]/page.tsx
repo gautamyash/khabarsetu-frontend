@@ -46,7 +46,7 @@ export default async function CategoryPage(props: PageProps<"/category/[slug]">)
     categories = await listCategories();
   } catch {
     return (
-      <Container className="py-16">
+      <Container className="py-12">
         <PublicEmptyState icon={TriangleAlert} size="lg" title={CATEGORY_ERROR_MESSAGE} />
       </Container>
     );
@@ -60,7 +60,7 @@ export default async function CategoryPage(props: PageProps<"/category/[slug]">)
     articlesPage = await getArticlesByCategoryPage(category.id, page, PAGE_SIZE);
   } catch {
     return (
-      <Container className="py-16">
+      <Container className="py-12">
         <PublicEmptyState icon={TriangleAlert} size="lg" title={ARTICLES_ERROR_MESSAGE} />
       </Container>
     );
@@ -92,8 +92,12 @@ export default async function CategoryPage(props: PageProps<"/category/[slug]">)
       <PageViewTracker eventType="category_view" path={`/category/${category.slug}`} categorySlug={category.slug} />
 
       <Container className="py-8 md:py-12">
-        <div className="mb-6 border-b border-on-surface pb-4">
-          <h1 className="font-serif-hi relative mb-2 inline-block text-[32px] font-extrabold text-primary sm:text-[40px]">
+        <div className="mb-8 border-b-2 border-on-surface pb-5">
+          <div className="mb-2 flex items-center gap-2.5">
+            <span className="h-[3px] w-9 shrink-0 bg-primary" aria-hidden />
+            <span className="text-[11px] font-bold tracking-[0.18em] text-primary uppercase">श्रेणी</span>
+          </div>
+          <h1 className="font-serif-hi relative mb-2 inline-block text-[34px] leading-[1.1] font-black tracking-tight text-on-surface sm:text-[44px]">
             {category.name}
           </h1>
           {category.description && (
@@ -127,8 +131,8 @@ export default async function CategoryPage(props: PageProps<"/category/[slug]">)
 
               {listArticles.length > 0 && (
                 <div>
-                  <h3 className="font-serif-hi mb-4 flex items-center gap-2 text-xl font-bold text-on-surface">
-                    <span className="h-6 w-2 shrink-0 bg-primary" aria-hidden />
+                  <h3 className="font-serif-hi mb-4 flex items-center gap-2.5 border-b-2 border-on-surface pb-3 text-xl font-black text-on-surface">
+                    <span className="h-6 w-1.5 shrink-0 bg-primary" aria-hidden />
                     ताज़ा खबरें
                   </h3>
                   <div className="flex flex-col gap-4">
@@ -153,8 +157,8 @@ export default async function CategoryPage(props: PageProps<"/category/[slug]">)
             {/* Sidebar (4 cols) */}
             <aside className="flex flex-col gap-8 lg:col-span-4">
               {alertArticle && (
-                <div className="border-l-4 border-primary bg-primary-container p-4 text-on-primary-container">
-                  <span className="mb-2 inline-block bg-on-surface px-2 py-1 text-xs font-bold text-surface uppercase">
+                <div className="rounded-lg border-l-4 border-primary bg-primary-container p-4 text-on-primary-container">
+                  <span className="mb-2 inline-block rounded-full bg-on-surface px-2.5 py-1 text-xs font-bold text-surface uppercase">
                     अलर्ट
                   </span>
                   <p className="font-serif-hi text-base font-bold">
@@ -166,18 +170,26 @@ export default async function CategoryPage(props: PageProps<"/category/[slug]">)
               )}
 
               {mostRead.length > 0 && (
-                <div>
-                  <h3 className="mb-4 border-t-4 border-primary pt-2 text-xl font-bold text-on-surface">
+                <div className="rounded-lg border border-outline-variant/60 bg-surface-container-low/60 p-5">
+                  <div className="mb-3 flex items-center gap-2">
+                    <span className="h-[3px] w-7 shrink-0 bg-primary" aria-hidden />
+                    <span className="text-[10px] font-bold tracking-[0.18em] text-primary uppercase">ट्रेंडिंग</span>
+                  </div>
+                  <h3 className="mb-4 border-b-2 border-on-surface pb-3 text-xl font-black text-on-surface">
                     सबसे ज्यादा पढ़ी गई
                   </h3>
                   <ul className="flex flex-col gap-4">
                     {mostRead.map((item, i) => (
                       <li
                         key={item.id}
-                        className={i > 0 ? "group flex gap-4 border-t border-outline-variant pt-4" : "group flex gap-4"}
+                        className={
+                          i > 0
+                            ? "card-hover group flex gap-4 border-t border-outline-variant pt-4"
+                            : "card-hover group flex gap-4"
+                        }
                       >
                         <Link href={`/news/${item.slug}`} className="contents">
-                          <span className="font-serif-hi text-[32px] leading-none font-bold text-surface-variant">
+                          <span className="font-serif-hi w-9 shrink-0 text-[34px] leading-none font-black tabular-nums text-primary/25 transition-colors group-hover:text-primary/45">
                             {String(i + 1).padStart(2, "0")}
                           </span>
                           <div className="min-w-0">

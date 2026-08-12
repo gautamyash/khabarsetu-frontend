@@ -30,9 +30,9 @@ export function StoryRow({
   className?: string;
 }) {
   return (
-    <article className={cn("group flex items-start gap-4 border-b border-outline-variant py-4 last:border-0", className)}>
+    <article className={cn("card-hover group flex items-start gap-4 border-b border-outline-variant py-4 last:border-0", className)}>
       {typeof index === "number" && (
-        <span className="font-serif-hi w-9 shrink-0 text-3xl leading-none font-black text-secondary-fixed-dim tabular-nums">
+        <span className="font-serif-hi w-10 shrink-0 text-[34px] leading-none font-black tabular-nums text-primary/25 transition-colors group-hover:text-primary/45 sm:text-4xl">
           {String(index).padStart(2, "0")}
         </span>
       )}
@@ -50,7 +50,7 @@ export function StoryRow({
       {showImage && (
         <Link
           href={`/news/${article.slug}`}
-          className="relative block h-24 w-24 shrink-0 overflow-hidden bg-surface-container"
+          className="relative block h-24 w-24 shrink-0 overflow-hidden rounded-md bg-surface-container"
         >
           <Image src={article.featuredImage} alt={article.title} fill sizes="96px" className="object-cover" />
         </Link>

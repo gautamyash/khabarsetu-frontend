@@ -46,7 +46,7 @@ export function ArticlePagination({
   const pageList = buildPageList(page, totalPages);
 
   const navButtonClass =
-    "flex items-center gap-1 border border-outline px-4 py-2 text-sm font-bold text-on-surface transition-colors hover:bg-surface-container-high";
+    "flex items-center gap-1 rounded-md border border-outline px-4 py-2 text-sm font-bold text-on-surface transition-colors hover:bg-surface-container-high";
 
   return (
     <nav aria-label="पेजिनेशन" className="flex flex-wrap items-center justify-center gap-2">
@@ -74,7 +74,7 @@ export function ArticlePagination({
               href={buildHref(item)}
               aria-current={item === page ? "page" : undefined}
               className={cn(
-                "flex h-10 w-10 items-center justify-center text-sm font-bold transition-colors",
+                "flex h-10 w-10 items-center justify-center rounded-md text-sm font-bold transition-colors",
                 item === page
                   ? "bg-primary text-on-primary"
                   : "border border-transparent text-on-surface hover:bg-surface-container-high"

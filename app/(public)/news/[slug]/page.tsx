@@ -88,7 +88,7 @@ export default async function ArticlePage(props: PageProps<"/news/[slug]">) {
     article = await getArticleBySlug(slug);
   } catch {
     return (
-      <Container className="py-16">
+      <Container className="py-12">
         <PublicEmptyState icon={TriangleAlert} size="lg" title={ERROR_MESSAGE} />
       </Container>
     );
@@ -154,32 +154,33 @@ export default async function ArticlePage(props: PageProps<"/news/[slug]">) {
         <header className="mb-8">
           <Link
             href={`/category/${article.category.slug}`}
-            className="mb-4 inline-block bg-primary-container px-3 py-1 text-xs font-bold tracking-wider text-white uppercase hover:opacity-90"
+            className="mb-4 inline-block rounded-full bg-primary-container px-3.5 py-1.5 text-xs font-bold tracking-wider text-white uppercase transition-colors hover:bg-primary"
           >
             {article.category.name}
           </Link>
 
-          <h1 className="font-serif-hi mb-6 text-[32px] leading-tight font-extrabold text-on-surface sm:text-[40px] sm:leading-[1.25]">
+          <h1 className="font-serif-hi mb-6 text-[32px] leading-[1.15] font-black tracking-tight text-on-surface sm:text-[42px] lg:text-[46px]">
             {article.title}
           </h1>
 
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-b border-outline-variant py-3 text-sm text-on-surface-variant">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-b border-outline-variant py-3 text-sm text-on-surface-variant">
             <span className="flex items-center gap-1.5">
-              <Calendar className="h-4 w-4" aria-hidden />
+              <Calendar className="h-4 w-4 text-primary" aria-hidden />
               प्रकाशित: {formatHindiDate(article.publishedAt)}
             </span>
             {wasUpdated && (
               <span className="flex items-center gap-1.5">
-                <RefreshCw className="h-4 w-4" aria-hidden />
+                <RefreshCw className="h-4 w-4 text-primary" aria-hidden />
                 अपडेट: {formatHindiDate(article.updatedAt as string)}
               </span>
             )}
             <span className="flex items-center gap-1.5 font-bold text-on-surface">
-              <User className="h-4 w-4" aria-hidden />
+              <User className="h-4 w-4 text-primary" aria-hidden />
               लेखक: {article.author.name}
             </span>
 
-            <div className="ml-auto">
+            <div className="ml-auto flex items-center gap-3">
+              <span className="hidden text-xs font-bold tracking-wide text-secondary uppercase sm:inline">शेयर करें</span>
               <ArticleShareRow url={shareUrl} title={article.title} />
             </div>
           </div>
@@ -188,7 +189,7 @@ export default async function ArticlePage(props: PageProps<"/news/[slug]">) {
         {/* 12-col grid: article + sidebar */}
         <div className="grid grid-cols-1 gap-8 md:grid-cols-12">
           <div className="article-divider pr-0 md:col-span-8 md:pr-6">
-            <div className="relative mb-8 aspect-video w-full overflow-hidden bg-surface-container-highest">
+            <div className="relative mb-8 aspect-video w-full overflow-hidden rounded-lg border border-outline-variant/60 bg-surface-container-highest">
               <Image src={article.featuredImage} alt={article.title} fill priority className="object-cover" />
             </div>
 
@@ -213,7 +214,7 @@ export default async function ArticlePage(props: PageProps<"/news/[slug]">) {
                 {article.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="cursor-pointer bg-surface-container px-3 py-1 text-xs font-bold tracking-wide text-on-surface-variant uppercase hover:bg-surface-container-highest"
+                    className="cursor-pointer rounded-full bg-surface-container px-3 py-1 text-xs font-bold tracking-wide text-on-surface-variant uppercase transition-colors hover:bg-surface-container-highest"
                   >
                     {tag}
                   </span>
@@ -224,8 +225,12 @@ export default async function ArticlePage(props: PageProps<"/news/[slug]">) {
 
           {/* Sidebar */}
           <aside className="flex flex-col gap-8 md:col-span-4">
-            <div className="border-t-4 border-primary-container bg-surface-container-low p-6">
-              <h3 className="font-serif-hi mb-4 text-xl font-bold text-on-surface">इस खबर के बारे में</h3>
+            <div className="rounded-lg border-t-4 border-primary-container bg-surface-container-low p-6">
+              <div className="mb-3 flex items-center gap-2">
+                <span className="h-[3px] w-7 shrink-0 bg-primary" aria-hidden />
+                <span className="text-[10px] font-bold tracking-[0.18em] text-primary uppercase">जानकारी</span>
+              </div>
+              <h3 className="font-serif-hi mb-3 text-xl font-black text-on-surface">इस खबर के बारे में</h3>
               <p className="text-sm leading-relaxed text-on-surface-variant">
                 यह खबर {article.category.name} डेस्क द्वारा तैयार की गई है और {article.author.name} द्वारा रिपोर्ट
                 की गई है। प्रकाशित: {formatHindiDate(article.publishedAt)}।
@@ -233,15 +238,19 @@ export default async function ArticlePage(props: PageProps<"/news/[slug]">) {
             </div>
 
             {mostRead.length > 0 && (
-              <div>
-                <h3 className="mb-4 border-b border-on-surface pb-2 text-xl font-bold text-on-surface">
+              <div className="rounded-lg border border-outline-variant/60 bg-surface-container-lowest p-5">
+                <div className="mb-3 flex items-center gap-2">
+                  <span className="h-[3px] w-7 shrink-0 bg-primary" aria-hidden />
+                  <span className="text-[10px] font-bold tracking-[0.18em] text-primary uppercase">ट्रेंडिंग</span>
+                </div>
+                <h3 className="font-serif-hi mb-4 border-b-2 border-on-surface pb-3 text-xl font-black text-on-surface">
                   सबसे ज्यादा पढ़ी गई
                 </h3>
-                <ul className="mt-4 space-y-6">
+                <ul className="space-y-5">
                   {mostRead.map((item, i) => (
-                    <li key={item.id} className="group flex gap-4">
+                    <li key={item.id} className="card-hover group flex gap-4">
                       <Link href={`/news/${item.slug}`} className="contents">
-                        <span className="font-serif-hi text-[40px] leading-none font-bold text-secondary-container transition-colors group-hover:text-primary-container">
+                        <span className="font-serif-hi w-10 shrink-0 text-[38px] leading-none font-black tabular-nums text-primary/25 transition-colors group-hover:text-primary/45">
                           {String(i + 1).padStart(2, "0")}
                         </span>
                         <div className="min-w-0">
@@ -263,15 +272,18 @@ export default async function ArticlePage(props: PageProps<"/news/[slug]">) {
 
         {/* Related news — full-width, below the main grid */}
         {related.length > 0 && (
-          <section className="mt-16 border-t-2 border-on-surface pt-8">
-            <h2 className="font-serif-hi mb-6 flex items-center gap-2 text-2xl font-bold text-on-surface">
-              <span className="h-4 w-4 shrink-0 bg-primary-container" aria-hidden />
+          <section className="mt-16 border-t border-outline-variant pt-10">
+            <div className="mb-6 flex items-center gap-2.5">
+              <span className="h-[3px] w-9 shrink-0 bg-primary" aria-hidden />
+              <span className="text-[11px] font-bold tracking-[0.18em] text-primary uppercase">आगे पढ़ें</span>
+            </div>
+            <h2 className="font-serif-hi mb-6 border-b-2 border-on-surface pb-3 text-2xl font-black text-on-surface">
               संबंधित खबरें
             </h2>
             <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
               {related.map((item, i) => (
-                <article key={item.id} className={i > 0 ? "group md:border-l md:border-outline-variant md:pl-6" : "group"}>
-                  <Link href={`/news/${item.slug}`} className="relative mb-3 block aspect-[3/2] overflow-hidden bg-surface-container">
+                <article key={item.id} className={i > 0 ? "card-hover group md:border-l md:border-outline-variant md:pl-6" : "card-hover group"}>
+                  <Link href={`/news/${item.slug}`} className="relative mb-3 block aspect-[3/2] overflow-hidden rounded-lg bg-surface-container">
                     <Image
                       src={item.featuredImage}
                       alt={item.title}

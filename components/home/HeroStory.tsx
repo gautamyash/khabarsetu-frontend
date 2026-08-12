@@ -13,7 +13,9 @@ import { formatRelativeHindi } from "@/lib/utils";
 export function HeroStory({ article, priority = false }: { article: Article; priority?: boolean }) {
   return (
     <article className="group">
-      <Link href={`/news/${article.slug}`} className="relative block aspect-[16/9] w-full overflow-hidden bg-surface-container">
+      <span className="mb-3 block h-1 w-16 bg-primary" aria-hidden />
+
+      <Link href={`/news/${article.slug}`} className="relative block aspect-[16/9] w-full overflow-hidden rounded-lg border border-outline-variant/60 bg-surface-container">
         <Image
           src={article.featuredImage}
           alt={article.title}
@@ -28,20 +30,20 @@ export function HeroStory({ article, priority = false }: { article: Article; pri
         {article.category.name}
       </span>
 
-      <h1 className="font-serif-hi mt-3 text-[32px] leading-[1.25] font-extrabold text-on-surface transition-colors group-hover:text-primary-container sm:mt-4 sm:text-[40px]">
+      <h1 className="font-serif-hi mt-3 text-[34px] leading-[1.15] font-black tracking-tight text-on-surface transition-colors group-hover:text-primary-container sm:mt-5 sm:text-[42px] lg:text-[46px]">
         <Link href={`/news/${article.slug}`}>{article.title}</Link>
       </h1>
 
       {article.excerpt && (
-        <p className="mt-3 max-w-2xl text-[20px] leading-[1.6] font-medium text-on-surface-variant sm:mt-4 sm:text-[22px]">
+        <p className="mt-3 max-w-2xl text-[19px] leading-[1.6] font-medium text-on-surface-variant sm:mt-4 sm:text-[21px]">
           {article.excerpt}
         </p>
       )}
 
-      <div className="mt-3 hidden items-center gap-3 text-xs font-medium tracking-wider text-secondary uppercase sm:flex sm:mt-4">
-        <span>{article.category.name}</span>
+      <div className="mt-4 hidden items-center gap-3 text-xs font-bold tracking-wider text-secondary uppercase sm:flex">
+        <span className="text-primary">{article.category.name}</span>
         <span className="h-1 w-1 rounded-full bg-outline" aria-hidden />
-        <span>{formatRelativeHindi(article.publishedAt)}</span>
+        <span className="font-medium normal-case">{formatRelativeHindi(article.publishedAt)}</span>
       </div>
     </article>
   );

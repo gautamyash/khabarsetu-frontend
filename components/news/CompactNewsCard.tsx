@@ -20,7 +20,7 @@ export function CompactNewsCard({
   className?: string;
 }) {
   return (
-    <article className={cn("group flex items-start gap-3 py-3", className)}>
+    <article className={cn("card-hover group flex items-start gap-3 py-3", className)}>
       {typeof index === "number" && (
         <span className="font-serif-hi w-7 shrink-0 text-2xl leading-none font-extrabold text-brand-700/30 tabular-nums group-hover:text-brand-700/50">
           {String(index).padStart(2, "0")}
@@ -30,7 +30,7 @@ export function CompactNewsCard({
       {showImage && (
         <Link
           href={`/news/${article.slug}`}
-          className="relative block h-16 w-24 shrink-0 overflow-hidden bg-ink-100 sm:h-[4.5rem] sm:w-28"
+          className="relative block h-16 w-24 shrink-0 overflow-hidden rounded-md bg-ink-100 sm:h-[4.5rem] sm:w-28"
         >
           <Image src={article.featuredImage} alt={article.title} fill sizes="120px" className="object-cover" />
         </Link>

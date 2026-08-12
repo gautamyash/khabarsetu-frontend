@@ -12,9 +12,9 @@ import type { Article } from "@/types/news";
  */
 export function SecondRowStory({ article, showImage = false }: { article: Article; showImage?: boolean }) {
   return (
-    <article className="group editorial-divider pr-0 pb-8 last:border-0 lg:pr-6 lg:pb-0">
+    <article className="card-hover group editorial-divider pr-0 pb-8 last:border-0 lg:pr-6 lg:pb-0">
       {showImage && (
-        <Link href={`/news/${article.slug}`} className="relative mb-4 block aspect-[3/2] w-full overflow-hidden bg-surface-container">
+        <Link href={`/news/${article.slug}`} className="relative mb-4 block aspect-[3/2] w-full overflow-hidden rounded-lg bg-surface-container">
           <Image
             src={article.featuredImage}
             alt={article.title}

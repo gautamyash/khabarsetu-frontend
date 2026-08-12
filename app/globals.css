@@ -53,18 +53,29 @@
   --color-secondary: #5f5e5e;
   --color-secondary-container: #e2dfde;
   --color-secondary-fixed-dim: #c8c6c5;
-  --color-surface: #f9f9f9;
-  --color-surface-variant: #e2e2e2;
-  --color-surface-container: #eeeeee;
-  --color-surface-container-low: #f3f3f3;
+  /* Warm cream/beige editorial scale (visual-only refresh — replaces the
+     previous neutral grays with the same relative lightness ordering, so
+     every existing surface-* usage site-wide automatically becomes a
+     tasteful warm cream/beige instead of flat gray, with zero JSX/markup
+     changes required). --color-surface-container-lowest stays pure white
+     on purpose: it's the readability-critical surface (mobile menu panel,
+     overflow menu, footer "white" text reference). */
+  --color-surface: #faf7f2;
+  --color-surface-variant: #e8dfd1;
+  --color-surface-container: #f1e8da;
+  --color-surface-container-low: #f5efe6;
   --color-surface-container-lowest: #ffffff;
-  --color-surface-container-high: #e8e8e8;
-  --color-surface-container-highest: #e2e2e2;
+  --color-surface-container-high: #ece1d0;
+  --color-surface-container-highest: #e6d8c2;
   --color-outline: #8c7071;
   --color-outline-variant: #e0bfbf;
-  --color-tertiary: #272726;
-  --color-tertiary-container: #3d3d3b;
-  --color-tertiary-fixed-dim: #c8c6c4;
+  /* Footer-only tokens (grepped: no other component references tertiary*)
+     — shifted from neutral near-black/gray to a dark maroon-charcoal with
+     cream text, per the "dark maroon/charcoal bg, cream text" footer
+     brief. Safe to change at the token level since nothing else uses it. */
+  --color-tertiary: #2a1613;
+  --color-tertiary-container: #4a2621;
+  --color-tertiary-fixed-dim: #e8ddc9;
   --color-error: #ba1a1a;
 }
 
@@ -134,6 +145,29 @@ li {
   .editorial-divider {
     border-right: none;
     border-bottom: 1px solid var(--color-on-surface);
+  }
+}
+
+/* Shared premium card hover treatment — a very subtle lift + warm-toned
+   shadow, used across news card/story components so hover feedback reads
+   consistently site-wide without every component repeating the same
+   utility classes. Deliberately restrained (2px lift, soft shadow) to
+   match an editorial rather than a "SaaS dashboard" feel. */
+.card-hover {
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px -12px rgba(38, 22, 15, 0.22);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-hover:hover {
+    transform: none;
   }
 }
 

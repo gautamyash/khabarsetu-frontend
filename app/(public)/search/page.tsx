@@ -33,8 +33,8 @@ function parsePage(value: string | string[] | undefined): number {
  * generic card grid). */
 function SearchResultRow({ article }: { article: Article }) {
   return (
-    <article className="group flex flex-col gap-4 border-b border-surface-variant pb-6 last:border-0 sm:flex-row">
-      <Link href={`/news/${article.slug}`} className="relative shrink-0 overflow-hidden bg-surface-container sm:w-1/3">
+    <article className="card-hover group flex flex-col gap-4 border-b border-surface-variant pb-6 last:border-0 sm:flex-row">
+      <Link href={`/news/${article.slug}`} className="relative shrink-0 overflow-hidden rounded-lg bg-surface-container sm:w-1/3">
         <span className="relative block aspect-video">
           <Image
             src={article.featuredImage}
@@ -115,14 +115,19 @@ export default async function SearchPage(props: PageProps<"/search">) {
       )}
 
       <Container className="py-8 md:py-12">
-        <section className="mb-8 border-b border-on-surface pb-8">
-          <h1 className="font-serif-hi mb-4 text-[32px] font-extrabold text-on-surface sm:text-[40px]">
+        <section className="mb-8 rounded-lg border border-outline-variant/60 bg-surface-container-low/60 px-6 py-8 sm:px-8">
+          <div className="mb-2 flex items-center gap-2.5">
+            <span className="h-[3px] w-9 shrink-0 bg-primary" aria-hidden />
+            <span className="text-[11px] font-bold tracking-[0.18em] text-primary uppercase">खोज</span>
+          </div>
+          <h1 className="font-serif-hi mb-5 text-[32px] leading-[1.15] font-black tracking-tight text-on-surface sm:text-[40px]">
             खबर खोजें
           </h1>
           <SearchPageForm defaultValue={query} />
           {query && !errorMessage && results && (
-            <p className="mt-2 text-sm text-secondary">
-              &lsquo;<span className="font-semibold">{query}</span>&rsquo; के लिए {results.total} परिणाम मिले
+            <p className="mt-3 text-sm text-secondary">
+              &lsquo;<span className="font-semibold text-on-surface">{query}</span>&rsquo; के लिए{" "}
+              <span className="font-semibold text-on-surface">{results.total}</span> परिणाम मिले
             </p>
           )}
         </section>
@@ -164,8 +169,8 @@ export default async function SearchPage(props: PageProps<"/search">) {
 
             <aside className="flex flex-col gap-8 md:col-span-4">
               {categories.length > 0 && (
-                <div className="border border-outline-variant bg-surface-container-low p-4">
-                  <h3 className="font-serif-hi mb-3 border-l-4 border-primary pl-3 text-xl font-bold text-on-surface">
+                <div className="rounded-lg border border-outline-variant bg-surface-container-low p-5">
+                  <h3 className="font-serif-hi mb-3 border-l-4 border-primary pl-3 text-xl font-black text-on-surface">
                     श्रेणियाँ
                   </h3>
                   <div className="mt-4 flex flex-wrap gap-2">
@@ -173,7 +178,7 @@ export default async function SearchPage(props: PageProps<"/search">) {
                       <Link
                         key={category.slug}
                         href={`/category/${category.slug}`}
-                        className="border border-outline px-3 py-1 text-sm font-bold text-on-surface transition-colors hover:border-primary hover:bg-primary hover:text-on-primary"
+                        className="rounded-full border border-outline px-3 py-1 text-sm font-bold text-on-surface transition-colors hover:border-primary hover:bg-primary hover:text-on-primary"
                       >
                         {category.name}
                       </Link>
@@ -183,19 +188,29 @@ export default async function SearchPage(props: PageProps<"/search">) {
               )}
 
               {trending.length > 0 && (
-                <div>
-                  <h3 className="font-serif-hi mb-4 border-l-4 border-primary pl-3 text-xl font-bold text-on-surface">
+                <div className="rounded-lg border border-outline-variant/60 bg-surface-container-low/60 p-5">
+                  <div className="mb-3 flex items-center gap-2">
+                    <span className="h-[3px] w-7 shrink-0 bg-primary" aria-hidden />
+                    <span className="text-[10px] font-bold tracking-[0.18em] text-primary uppercase">ट्रेंडिंग</span>
+                  </div>
+                  <h3 className="font-serif-hi mb-4 border-b-2 border-on-surface pb-3 text-xl font-black text-on-surface">
                     ताज़ा रुझान
                   </h3>
-                  <ul className="flex flex-col gap-2">
+                  <ul className="flex flex-col gap-4">
                     {trending.map((item, i) => (
                       <li
                         key={item.id}
-                        className={i > 0 ? "group mt-2 border-b border-surface-variant pb-2" : "group border-b border-surface-variant pb-2"}
+                        className={
+                          i > 0
+                            ? "card-hover group flex gap-3 border-t border-outline-variant pt-4"
+                            : "card-hover group flex gap-3"
+                        }
                       >
-                        <Link href={`/news/${item.slug}`}>
-                          <span className="mb-1 block text-sm font-bold text-primary">{String(i + 1).padStart(2, "0")}</span>
-                          <h4 className="line-clamp-2 text-sm font-bold text-on-surface transition-colors group-hover:text-primary">
+                        <Link href={`/news/${item.slug}`} className="contents">
+                          <span className="font-serif-hi w-8 shrink-0 text-3xl leading-none font-black tabular-nums text-primary/25 transition-colors group-hover:text-primary/45">
+                            {String(i + 1).padStart(2, "0")}
+                          </span>
+                          <h4 className="line-clamp-2 text-sm leading-snug font-bold text-on-surface transition-colors group-hover:text-primary">
                             {item.title}
                           </h4>
                         </Link>

@@ -14,8 +14,8 @@ import { formatRelativeHindi } from "@/lib/utils";
  */
 export function CategoryListRow({ article }: { article: Article }) {
   return (
-    <article className="group flex gap-4 border-b border-outline-variant pb-4 last:border-0">
-      <Link href={`/news/${article.slug}`} className="relative h-24 w-32 shrink-0 overflow-hidden bg-surface-container">
+    <article className="card-hover group flex gap-4 border-b border-outline-variant pb-4 last:border-0">
+      <Link href={`/news/${article.slug}`} className="relative h-24 w-32 shrink-0 overflow-hidden rounded-md bg-surface-container">
         <Image src={article.featuredImage} alt={article.title} fill sizes="128px" className="object-cover transition-transform duration-300 group-hover:scale-110" />
       </Link>
       <div className="flex flex-col justify-center">
