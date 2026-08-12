@@ -34,7 +34,7 @@ export async function Header() {
   const today = formatHindiDate(new Date().toISOString());
 
   return (
-    <header className="sticky top-0 z-40 border-b border-on-surface bg-surface-container-low/50">
+    <header className="sticky top-0 z-40 border-b border-on-surface bg-surface-container-low">
       {/* Masthead flag rule — a thin solid maroon band across the very top
           of the page, the same "front page" cue newspapers use above the
           nameplate. */}
