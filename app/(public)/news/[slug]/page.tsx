@@ -189,14 +189,23 @@ export default async function ArticlePage(props: PageProps<"/news/[slug]">) {
         {/* 12-col grid: article + sidebar */}
         <div className="grid grid-cols-1 gap-8 md:grid-cols-12">
           <div className="article-divider pr-0 md:col-span-8 md:pr-6">
-            <div className="relative mb-8 aspect-video w-full overflow-hidden rounded-lg border border-outline-variant/60 bg-surface-container-highest">
+            <div className="mb-8 w-full overflow-hidden rounded-lg border border-outline-variant/60 bg-surface-container-highest">
+              {/* No `fill`/fixed aspect-ratio box here on purpose: articles'
+                  featured images vary in shape (portrait/landscape/square),
+                  and a forced box + object-cover was cropping whatever
+                  didn't match that box (see git history for the bug this
+                  replaced). width/height below are only Next's required
+                  layout-reservation hint — the optimizer only ever resizes
+                  by width, so the actually-rendered image keeps its true
+                  aspect ratio via `h-auto`, cropping nothing. */}
               <Image
                 src={article.featuredImage}
                 alt={article.title}
-                fill
+                width={1600}
+                height={900}
                 priority
                 sizes="(min-width: 1024px) 800px, 100vw"
-                className="object-cover"
+                className="h-auto w-full"
               />
             </div>
 
