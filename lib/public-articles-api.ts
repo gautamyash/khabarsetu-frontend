@@ -1,3 +1,5 @@
+import { cache } from "react";
+import { unstable_cache } from "next/cache";
 import { apiClient } from "@/lib/api-client";
 import { toApiError } from "@/lib/api-error";
 import type { Article, Author, Category } from "@/types/news";
@@ -145,19 +147,56 @@ async function fetchPublishedArticles(params: {
   return result.items;
 }
 
-/** Published articles flagged as breaking news. */
+/**
+ * Published articles flagged as breaking news.
+ *
+ * Called with the same params from the homepage, article page, and category
+ * page on every single visit (see the egress audit) — wrapped in
+ * `unstable_cache` so those visits share one cross-request cached result
+ * instead of each re-querying Supabase. `limit` is always resolved to a
+ * concrete number here (never left as an implicit "no argument" call) and
+ * passed straight into the cached function, so it's part of what
+ * `unstable_cache` keys on: `getBreakingArticles()` and
+ * `getBreakingArticles(8)` deterministically hit the same cache entry (both
+ * resolve to 8 before the cache boundary), while `getBreakingArticles(1)`
+ * is guaranteed a distinct entry and can never be served the 8-item result.
+ * This exported function's own signature/behavior is unchanged — every
+ * existing call site keeps working exactly as before.
+ */
+const getCachedBreakingArticles = unstable_cache(
+  async (limit: number): Promise<Article[]> => fetchPublishedArticles({ isBreaking: true, limit }),
+  ["breaking-articles"],
+  { revalidate: 30 }
+);
+
 export function getBreakingArticles(limit = 8): Promise<Article[]> {
-  return fetchPublishedArticles({ isBreaking: true, limit });
+  return getCachedBreakingArticles(limit);
 }
 
-/** Published articles flagged as featured — homepage hero area. */
+/** Published articles flagged as featured — homepage hero area. Not part of
+ * this cache pass — only getBreakingArticles/getLatestArticles were found to
+ * be repeated, param-identical, sitewide calls across pages. */
 export function getFeaturedArticles(limit = 6): Promise<Article[]> {
   return fetchPublishedArticles({ isFeatured: true, limit });
 }
 
-/** Most recently published articles overall. */
+/**
+ * Most recently published articles overall — same cross-page repetition and
+ * same `unstable_cache` treatment as getBreakingArticles above. Call sites
+ * pass differing limits (16 on the homepage, 6 on the article page, 4 on
+ * the category page, 3 on search) — each concrete `limit` value passed into
+ * the cached function is its own independent cache entry, so
+ * getLatestArticles(16) can never be served getLatestArticles(3)'s result
+ * or vice versa.
+ */
+const getCachedLatestArticles = unstable_cache(
+  async (limit: number): Promise<Article[]> => fetchPublishedArticles({ limit }),
+  ["latest-articles"],
+  { revalidate: 60 }
+);
+
 export function getLatestArticles(limit = 8): Promise<Article[]> {
-  return fetchPublishedArticles({ limit });
+  return getCachedLatestArticles(limit);
 }
 
 /** Published articles within a single category. */
@@ -176,8 +215,20 @@ export function getArticlesByCategoryId(categoryId: string, limit = 4): Promise<
  * neither does this function). The caller should treat null as "call
  * notFound()". Any other failure (network, 5xx) still throws ApiError so
  * the caller can show a real error state instead of a false 404.
+ *
+ * Wrapped in React's `cache()` — same pattern as listCategories() in
+ * lib/categories-api.ts — because app/(public)/news/[slug]/page.tsx calls
+ * this twice with the identical slug in the same request: once from
+ * generateMetadata(), once from the page component. Without this, that was
+ * two full GET /articles/slug/{slug} round-trips (including the full
+ * article `content` body) for one page visit. `cache()` only dedupes
+ * identical calls within a single request/render pass — it is reset for
+ * every new request, so it never persists a stale article across requests
+ * or fights this route's `export const dynamic = "force-dynamic"` above;
+ * each fresh request still calls the backend for the current data, just
+ * once instead of twice.
  */
-export async function getArticleBySlug(slug: string): Promise<Article | null> {
+export const getArticleBySlug = cache(async (slug: string): Promise<Article | null> => {
   try {
     const { data } = await apiClient.get<PublicArticleDetailShape>(
       `/articles/slug/${encodeURIComponent(slug)}`
@@ -188,7 +239,7 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
     if (apiError.status === 404) return null;
     throw apiError;
   }
-}
+});
 
 /**
  * A small "संबंधित खबरें" set: other published articles in the same

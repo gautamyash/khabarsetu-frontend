@@ -3,6 +3,19 @@ import { listCategories } from "@/lib/categories-api";
 import { getAllPublishedArticles } from "@/lib/public-articles-api";
 import { SITE_URL } from "@/lib/site-url";
 
+// Without this, this route has no dynamic API usage and no revalidate
+// config, so it's statically generated once and left as-is — which sounds
+// safe but isn't actually guaranteed cheap: getAllPublishedArticles() below
+// has no row-count ceiling (unlike every limited fetch elsewhere in this
+// app), so any regeneration walks the entire published-article table. This
+// bounds how often that walk can happen to at most once per hour, no
+// matter how often crawlers request /sitemap.xml — sitemap freshness has
+// no real urgency (search engines don't need a new article reflected
+// within minutes), so an hour of possible staleness is a safe tradeoff for
+// a cost that would otherwise grow unbounded with both crawl frequency and
+// total published-article count over the site's lifetime.
+export const revalidate = 3600;
+
 /**
  * Real sitemap — replaces the Phase 1 mock-data placeholder. Only ever
  * includes public, published content: the homepage, every published

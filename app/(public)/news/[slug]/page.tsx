@@ -190,7 +190,14 @@ export default async function ArticlePage(props: PageProps<"/news/[slug]">) {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-12">
           <div className="article-divider pr-0 md:col-span-8 md:pr-6">
             <div className="relative mb-8 aspect-video w-full overflow-hidden rounded-lg border border-outline-variant/60 bg-surface-container-highest">
-              <Image src={article.featuredImage} alt={article.title} fill priority className="object-cover" />
+              <Image
+                src={article.featuredImage}
+                alt={article.title}
+                fill
+                priority
+                sizes="(min-width: 1024px) 800px, 100vw"
+                className="object-cover"
+              />
             </div>
 
             {article.excerpt && (

@@ -24,8 +24,20 @@ import type { Article } from "@/types/news";
 // request thereafter — confirmed in production: the homepage was serving a
 // render from a prior day while /category/[slug] (which reads
 // searchParams, forcing dynamic rendering) and /news/[slug] stayed fresh.
-// Forcing dynamic rendering here matches that same always-fresh behavior.
-export const dynamic = "force-dynamic";
+//
+// `force-dynamic` fixed that staleness bug, but it also means every single
+// visitor re-runs loadHomeData()'s 5 Supabase-backed /articles requests —
+// confirmed as the top Supabase egress source in the egress audit. A
+// time-based revalidation window fixes the same staleness bug (the page
+// can never again get stuck on a snapshot from days ago — it's rebuilt at
+// least once every 60s) while collapsing however many visitors arrive
+// within each 60s window down to a single re-run of loadHomeData(), same
+// as ISR. 60s was chosen as a starting point: short enough that a newly
+// published/breaking article shows up within a minute (this is a live news
+// site, not a low-frequency blog), long enough to absorb realistic traffic
+// bursts without re-querying Supabase per visitor. No query, filter,
+// ordering, or UI logic changes — only how often the existing render runs.
+export const revalidate = 60;
 
 interface HomeData {
   breaking: Article[];
