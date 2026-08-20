@@ -1,4 +1,3 @@
-import Script from "next/script";
 import type { Metadata } from "next";
 import "../globals.css";
 import { notoSansDevanagari, notoSerifDevanagari } from "@/lib/fonts";
@@ -53,11 +52,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="hi"
       className={`${notoSansDevanagari.variable} ${notoSerifDevanagari.variable} h-full antialiased`}
     >
-      <Script
-        async
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3334209577099709"
-        crossOrigin="anonymous"
-      />
+      <head>
+        <meta name="google-adsense-account" content="ca-pub-3334209577099709" />
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3334209577099709"
+          crossOrigin="anonymous"
+        />
+      </head>
+
       <body className="flex min-h-full flex-col bg-surface text-on-surface">
         <Header />
         <main className="flex-1">{children}</main>
