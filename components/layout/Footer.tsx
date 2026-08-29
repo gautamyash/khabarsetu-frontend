@@ -67,6 +67,18 @@ export async function Footer() {
               <Link href="/search" className={LINK_CLASS}>
                 {UI_TEXT.search}
               </Link>
+              <Link href="/about" className={LINK_CLASS}>
+                हमारे बारे में
+              </Link>
+              <Link href="/contact" className={LINK_CLASS}>
+                संपर्क करें
+              </Link>
+              <Link href="/privacy" className={LINK_CLASS}>
+                गोपनीयता नीति
+              </Link>
+              <Link href="/terms" className={LINK_CLASS}>
+                उपयोग की शर्तें
+              </Link>
             </div>
           </div>
 

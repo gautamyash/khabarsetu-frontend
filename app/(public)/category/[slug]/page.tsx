@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Newspaper, TriangleAlert } from "lucide-react";
+import { ChevronRight, Newspaper, TriangleAlert } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { PublicEmptyState } from "@/components/ui/PublicEmptyState";
 import { NewsCard } from "@/components/news/NewsCard";
@@ -13,6 +13,7 @@ import { listCategories } from "@/lib/categories-api";
 import { getArticlesByCategoryPage, getBreakingArticles, getLatestArticles } from "@/lib/public-articles-api";
 import { formatRelativeHindi } from "@/lib/utils";
 import { SITE_URL } from "@/lib/site-url";
+import { UI_TEXT } from "@/lib/constants";
 import type { Article } from "@/types/news";
 
 const CATEGORY_ERROR_MESSAGE = "श्रेणी उपलब्ध नहीं है।";
@@ -92,6 +93,14 @@ export default async function CategoryPage(props: PageProps<"/category/[slug]">)
       <PageViewTracker eventType="category_view" path={`/category/${category.slug}`} categorySlug={category.slug} />
 
       <Container className="py-8 md:py-12">
+        <nav aria-label="ब्रेडक्रम्ब" className="mb-4 flex items-center gap-2 text-sm font-bold text-on-surface-variant">
+          <Link href="/" className="transition-colors hover:text-primary">
+            {UI_TEXT.home}
+          </Link>
+          <ChevronRight className="h-3.5 w-3.5 shrink-0" aria-hidden />
+          <span className="text-on-surface">{category.name}</span>
+        </nav>
+
         <div className="mb-8 border-b-2 border-on-surface pb-5">
           <div className="mb-2 flex items-center gap-2.5">
             <span className="h-[3px] w-9 shrink-0 bg-primary" aria-hidden />
