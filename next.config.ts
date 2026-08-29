@@ -29,6 +29,23 @@ const supabaseOrigin = new URL("https://gnrginstunclokgqxtkp.supabase.co");
 
 const nextConfig: NextConfig = {
   images: {
+    // TEMPORARY: Vercel's own Image Optimization service is currently
+    // returning 402 Payment Required (error code
+    // OPTIMIZED_IMAGE_REQUEST_PAYMENT_REQUIRED) once its monthly
+    // transformation quota is used up — confirmed live on production by
+    // inspecting failed /_next/image requests. Already-cached optimized
+    // variants keep loading fine, which is why this only shows up as
+    // freshly published articles' images failing to render. `unoptimized`
+    // makes next/image render a plain <img src=originalUrl> for every
+    // image in the app, skipping Vercel's paid optimizer entirely — images
+    // are served directly from their origin (Supabase Storage/backend)
+    // instead. Safe to do here because every uploaded image is already
+    // capped at 200KB (see backend/app/core/config.py's
+    // MAX_UPLOAD_SIZE_BYTES), so serving originals unresized isn't a heavy
+    // egress or performance regression. Remove this once the Vercel plan's
+    // Image Optimization quota/billing is resolved, to restore automatic
+    // resizing and modern-format (webp) conversion.
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: backendOrigin.protocol.replace(":", "") as "http" | "https",
