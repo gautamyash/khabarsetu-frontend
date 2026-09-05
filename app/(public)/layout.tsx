@@ -53,7 +53,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${notoSansDevanagari.variable} ${notoSerifDevanagari.variable} h-full antialiased`}
     >
       <head>
-        <meta name="google-adsense-account" content="ca-pub-3334209577099709" />
+        <meta name="google-adsense-account" content="ca-pub-2516492211047332" />
         <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3334209577099709"
